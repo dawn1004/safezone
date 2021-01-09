@@ -1,10 +1,11 @@
 import * as React from 'react';
 import { Dimensions, View, Text, ScrollView, SafeAreaView, StyleSheet, TouchableOpacity } from 'react-native';
-const {useState} = React
+const { useState, useEffect } = React
 import { createStackNavigator } from '@react-navigation/stack';
 import { Directions } from 'react-native-gesture-handler';
 import { Icon, Button, ListItem, Image } from 'react-native-elements';
 import { LinearGradient } from 'expo-linear-gradient';
+import * as firebase from 'firebase'
 
 
 import FirstAidDescription from '../../components/FirstAidDescription'
@@ -59,37 +60,26 @@ const windowWidth = Dimensions.get('window').width;
 const windowHeight = Dimensions.get('window').height;
 
 function FirstAidScreen({ navigation }) {
-    const [classData, setClassData] = useState([
-      {
-        name: 'Cut / Scrape',
-        tips:[]
-      },
-      {
-        name: 'Burn',
-        tips:[]
-      },
-      {
-        name: 'Splinter',
-        tips:[]
-      },
-      {
-        name: 'Sunburn',
-        tips:[]
-      },
-      {
-        name: 'Nosebleed',
-        tips:[]
-      },
-      {
-        name: 'Sprain',
-        tips:[]
-      },
-      {
-        name: 'Fracture',
-        tips:[]
-      },
-    ])
+    const [classData, setClassData] = useState([])
     
+    useEffect(()=>{
+    
+    var tutorialsRef = firebase.database().ref("/firstAid");
+    
+    tutorialsRef.once('value', function(snapshot) {
+      var tutorials = [];
+      const firstaids = snapshot.val()
+      let firstAidList = [];
+
+      for(let id in firstaids){
+        firstAidList.push({ id, ...firstaids[id]})
+      }
+      setClassData(firstAidList)
+      // console.log(firstAidList)
+    });
+
+    },[])
+
     return (
         <LinearGradient
         colors={['#f99ca4', '#ff4f4f']}
@@ -103,30 +93,35 @@ function FirstAidScreen({ navigation }) {
         alignItems: 'center', 
         justifyContent: 'center',
         }}>
-            <ScrollView>
-                <View style={styles.container}>
-                  {
-                    classData.map((data,index)=>(
-                      (
-                        <Button 
-                        key={index}
-                        buttonStyle={{
-                          backgroundColor: '#f89a9d', 
-                          borderRadius: 30,
-                          width: 280,
-                          padding: 13,
-                          marginBottom: 10,
-                          elevation: 1,
-                        }}
-                        title={data.name} 
-                        onPress={()=>{navigation.navigate(data.name, data)}}
-                        />
-                      )
-                    ))
-                  }
-                </View>
 
-            </ScrollView>
+          {classData.length==0?
+            <View  style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}> 
+              <Text style={{color: "white"}}>Loading . . .</Text> 
+            </View>:
+            <View style={styles.container}>
+              {
+                classData.map((data,index)=>(
+                  (
+                    <Button 
+                    key={index}
+                    buttonStyle={{
+                      backgroundColor: '#f89a9d', 
+                      borderRadius: 30,
+                      width: 280,
+                      padding: 13,
+                      marginBottom: 10,
+                      elevation: 1,
+                    }}
+                    title={data.name} 
+                    onPress={()=>{navigation.navigate(data.name, data)}}
+                    />
+                  )
+                ))
+              }
+            </View>
+          
+          }
+
             <View
                 style={{ width: windowWidth, minHeight: 220, position: "relative" }}
                 >

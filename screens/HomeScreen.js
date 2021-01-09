@@ -27,6 +27,7 @@ export default function HomeScreen({ navigation }) {
         name="home" 
         component={Home} 
         options={{ 
+            cardStyle:{backgroundColor: "white"},
             title: 'SafeZone',
             headerTitleAlign: 'center',
             headerLeft: () => (
@@ -76,7 +77,13 @@ export default function HomeScreen({ navigation }) {
         />
         <Stack.Screen name="Weather Updates" component={Weather} 
         options={{title: "Weather Updates",
-        cardStyle:{backgroundColor: "white"}
+        cardStyle:{backgroundColor: "white"},
+        headerStyle: {
+            backgroundColor: '#fc5e5e',
+            elevation: 0
+        },
+        headerTintColor: '#fff',
+        headerTitleAlign: 'center'
         }}
         />
         <Stack.Screen name="Emergency Exit" component={Emergency} 
@@ -118,16 +125,13 @@ function Home({ navigation }) {
                             
                             <TouchableOpacity
                             onPress={()=>{navigation.navigate(button.name)}}
+                            style={styles.avatars}
                             >
-                                <View 
-                                style={styles.avatars}
-                                >
-                                    <Image
-                                    source={button.url}
-                                    style={{ width: 130, height: 130, }}
-                                    resizeMode='cover'
-                                    />
-                                </View>                            
+                                <Image
+                                source={button.url}
+                                style={{ width: 130, height: 130, }}
+                                resizeMode='cover'
+                                />                           
                             </TouchableOpacity>
 
                             <Text style={{color: 'white', marginTop: -10}}>

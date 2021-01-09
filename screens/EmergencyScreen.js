@@ -1,11 +1,19 @@
 import * as React from 'react';
-import { View, Text } from 'react-native';
-const {useState} = React
-import { Icon, Button } from 'react-native-elements';
+import { Dimensions, View, Text, SafeAreaView, StyleSheet } from 'react-native';
+const {useState, useEffect} = React
+import { Icon, Button, Image } from 'react-native-elements';
 
 import { createStackNavigator } from '@react-navigation/stack';
+import { ScrollView } from 'react-native-gesture-handler';
+import { LinearGradient } from 'expo-linear-gradient';
+import * as firebase from 'firebase'
+
 
 const Stack = createStackNavigator();
+
+
+const windowWidth = Dimensions.get('window').width;
+const windowHeight = Dimensions.get('window').height;
 
 export default function Emergency({ navigation }) {
     return (
@@ -14,7 +22,7 @@ export default function Emergency({ navigation }) {
         name="Emergency" 
         component={EmergencyStack} 
         options={{ 
-            title: 'Emergency',
+            title: 'Emergency Hotlines',
             headerTitleAlign: 'center',
             headerLeft: () => (
                 <Button
@@ -35,11 +43,63 @@ export default function Emergency({ navigation }) {
   }
 
 function EmergencyStack({ navigation }) {
-    return (
-      <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+    let contactsRef = firebase.database().ref("/contacts")
+    const [contacts, setContacts] =useState([])
 
-        <Text>This is EmergencyStack</Text>
-        
-      </View>
+    useEffect(() => {
+      contactsRef.once('value', function(snapshot) {
+        const contactsObject = snapshot.val()
+        let contactsList = [];
+  
+        for(let id in contactsObject){
+          contactsList.push({ id, ...contactsObject[id]})
+        }
+        setContacts(contactsList)
+        console.log(contacts)
+      });
+    }, [])
+
+    return (
+      <LinearGradient
+      colors={['#ff4950', '#fa6869']}
+      style={{width: windowWidth, height: windowHeight}}
+      start={{x: 0, y:0.5}}
+      end={{x: 0.5, y: 0.7}}
+      >  
+        <SafeAreaView style={{ flex: 1, alignItems: 'center', justifyContent: 'center'}}>
+          <ScrollView>
+            <View style={{width: windowWidth, alignItems: 'center'}}>
+              {
+                contacts.map(contact=>(
+                  <View style={styles.cardu} key={contact.id}>
+                    <Text style={{...styles.defaulText, fontWeight: "bold",}}>{contact.name}: </Text>
+                    <Text style={styles.defaulText}>{contact.contact}</Text>
+                  </View>
+                ))
+              }
+            </View>
+          </ScrollView>
+          <Image 
+          source={require('../assets/whiteBottom.png')}
+          style={{width: windowWidth, height: 200,}}
+          />
+        </SafeAreaView>
+      </LinearGradient>
     );
 }
+
+
+const styles = StyleSheet.create({
+  cardu:{
+    backgroundColor: "#fd8585",
+    width: 300,
+    paddingVertical: 10,
+    borderRadius: 40,
+    marginTop: 20
+  },
+  defaulText:{
+    color: 'white',
+    textAlign: 'center',
+    fontSize: 16,
+  }
+})
