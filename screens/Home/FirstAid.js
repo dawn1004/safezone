@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Dimensions, View, Text, ScrollView, SafeAreaView, StyleSheet, TouchableOpacity } from 'react-native';
-const { useState, useEffect } = React
+const { useState, useEffect, useContext } = React
 import { createStackNavigator } from '@react-navigation/stack';
 import { Directions } from 'react-native-gesture-handler';
 import { Icon, Button, ListItem, Image } from 'react-native-elements';
@@ -61,12 +61,14 @@ const windowHeight = Dimensions.get('window').height;
 
 function FirstAidScreen({ navigation }) {
     const [classData, setClassData] = useState([])
-    
+    const [onChangeTip, setOnChangeTip] = useState(true)
+
+
     useEffect(()=>{
     
     var tutorialsRef = firebase.database().ref("/firstAid");
     
-    tutorialsRef.once('value', function(snapshot) {
+    tutorialsRef.on('value', function(snapshot) {
       var tutorials = [];
       const firstaids = snapshot.val()
       let firstAidList = [];
@@ -75,7 +77,6 @@ function FirstAidScreen({ navigation }) {
         firstAidList.push({ id, ...firstaids[id]})
       }
       setClassData(firstAidList)
-      // console.log(firstAidList)
     });
 
     },[])
@@ -133,7 +134,8 @@ function FirstAidScreen({ navigation }) {
                     />            
                 </View>  
         </SafeAreaView>
-        </LinearGradient> 
+        </LinearGradient>      
+
     );
   }
 

@@ -1,7 +1,7 @@
 import React from 'react'
 import { DrawerContentScrollView, DrawerItemList, DrawerItem } from '@react-navigation/drawer'
 import { Avatar, Image, Icon, Button } from 'react-native-elements';
-import {  View, Text, ScrollView, SafeAreaView, StyleSheet, TouchableOpacity } from 'react-native';
+import { BackHandler, View, Text, ScrollView, SafeAreaView, StyleSheet, TouchableOpacity } from 'react-native';
 import {Container, Header, Footer, Content, Right, Left, Thumbnail, ListItem} from 'native-base'
 
 export default function Sidebar({...props}){
@@ -47,7 +47,9 @@ export default function Sidebar({...props}){
                 </DrawerItem>
 
                 <DrawerItemList {...props} />
-                <DrawerItem label="Exit" icon={(color, size)=>(
+                <DrawerItem label="Exit" 
+                onPress={()=>{BackHandler.exitApp()}}
+                icon={(color, size)=>(
                     <Icon name="login" style={{fontSize: size, color: color}}/>
                 )}>
 
