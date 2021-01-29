@@ -3,11 +3,26 @@ import { Dimensions, Button, View, Text, SafeAreaView, StyleSheet, ScrollViewBas
 import ReactNativeZoomableView from '@dudigital/react-native-zoomable-view/src/ReactNativeZoomableView';
 import { ScrollView } from 'react-native-gesture-handler';
 import { Icon, Image } from 'react-native-elements';
+const {useState, useEffect} = React
+import * as firebase from 'firebase'
 
 const windowWidth = Dimensions.get('window').width;
 const windowHeight = Dimensions.get('window').height;
 
 export default function Emergency({ navigation }) {
+    const [image, setImage] = useState(null);
+    let imageLocRef = firebase.database().ref("/imageloc")
+
+    useEffect(() => {
+      imageLocRef.once('value', function(snapshot) {
+        const imageObject = snapshot.val()
+        for(let id in imageObject){
+          setImage(imageObject[id].url)
+          return
+        }
+      });
+    })
+
     return (
       <SafeAreaView style={{ flex: 1, alignItems: 'center', justifyContent: 'center'}}>
 
@@ -24,26 +39,16 @@ export default function Emergency({ navigation }) {
                 // backgroundColor: 'red',
             }}
             >
-            <Image 
-            style={{width: windowWidth, height:windowWidth}}
-            source={require("../../assets/Map.png")} />
+              {
+                image==null?
+                (<></>):
+                (<Image 
+                  style={{width: windowWidth, height:windowWidth}}
+                  source={{uri: image}} />)
+              }
             </ReactNativeZoomableView>
           </View> 
 
-          <View style={styles.boxInfo}>
-            <View style={{flexDirection: "row", alignItems: "center"}}>
-              <Icon
-                reverse
-                name='arrow-back-outline'
-                type='ionicon'
-                color="transparent"
-                iconStyle={{color: "red"}}
-              />
-              <Text style={{color: "#575757"}}>Exit Symbol</Text>
-            </View>
-
-            
-          </View>
       </SafeAreaView>
       
     );

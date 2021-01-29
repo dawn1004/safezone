@@ -11,6 +11,7 @@ const windowHeight = Dimensions.get('window').height;
 
 export default function Burn({ route, navigation }) {
     const {name, tips} = route.params
+
     return (
 
       <LinearGradient
@@ -23,7 +24,8 @@ export default function Burn({ route, navigation }) {
             <ScrollView>
               <View style={styles.container}>     
 
-                {
+                {tips==undefined?
+                (<Text style={{color: "grey"}}>No content found..</Text>):
                   tips.map((tip, index)=>(
                     <ListItem 
                     key={index}  
