@@ -1,10 +1,10 @@
 import * as React from 'react';
-import { Dimensions, View, Text, SafeAreaView, StyleSheet } from 'react-native';
+import { Dimensions, View, Text, SafeAreaView, StyleSheet, Linking } from 'react-native';
 const {useState, useEffect} = React
 import { Icon, Button, Image } from 'react-native-elements';
 
 import { createStackNavigator } from '@react-navigation/stack';
-import { ScrollView } from 'react-native-gesture-handler';
+import { ScrollView, TouchableOpacity } from 'react-native-gesture-handler';
 import { LinearGradient } from 'expo-linear-gradient';
 import * as firebase from 'firebase'
 
@@ -59,6 +59,10 @@ function EmergencyStack({ navigation }) {
       });
     }, [])
 
+    const callLinkHandler = (contact)=>{
+      Linking.openURL(`tel:${contact.split("/")[0]}`)
+    }
+
     return (
       <LinearGradient
       colors={['#ff4950', '#fa6869']}
@@ -71,10 +75,13 @@ function EmergencyStack({ navigation }) {
             <View style={{width: windowWidth, alignItems: 'center'}}>
               {
                 contacts.map(contact=>(
-                  <View style={styles.cardu} key={contact.id}>
-                    <Text style={{...styles.defaulText, fontWeight: "bold",}}>{contact.name}: </Text>
-                    <Text style={styles.defaulText}>{contact.contact}</Text>
-                  </View>
+                  <TouchableOpacity onPress={()=>{callLinkHandler(contact.contact)}} key={contact.id}>
+                    <View style={styles.cardu}>
+                      <Text style={{...styles.defaulText, fontWeight: "bold",}}>{contact.name}: </Text>
+                      <Text style={styles.defaulText}>{contact.contact}</Text>
+                    </View>                    
+                  </TouchableOpacity>
+
                 ))
               }
             </View>
